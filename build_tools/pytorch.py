@@ -43,8 +43,9 @@ def setup_pytorch_extension(
 
     # Compiler flags
     cxx_flags = [
-        "-O3",
-        "-fvisibility=hidden",
+        "/O2",
+        "/std:c++17",
+        # "-fvisibility=hidden",
     ]
     nvcc_flags = [
         "-O3",
