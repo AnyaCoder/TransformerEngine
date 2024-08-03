@@ -50,8 +50,6 @@ class CMakeExtension(setuptools.Extension):
         # CMake configure command
         build_type = "Debug" if debug_build_enabled() else "Release"
         
-        cudnn_include = "C:/Miniconda3/envs/build/Lib/site-packages/nvidia/cudnn/include"
-        cudnn_lib = "C:/Miniconda3/envs/build/Lib/site-packages/nvidia/cudnn/lib/x64"
         
         configure_command = [
             _cmake_bin,
@@ -61,8 +59,6 @@ class CMakeExtension(setuptools.Extension):
             f"-DPython_INCLUDE_DIR={sysconfig.get_path('include')}",
             f"-DCMAKE_BUILD_TYPE={build_type}",
             f"-DCMAKE_INSTALL_PREFIX={install_dir}",
-            f"-DCUDNN_INCLUDE_DIR={cudnn_include}",
-            f"-DCUDNN_LIBRARY={cudnn_lib}/cudnn.lib",
         ]
         
         configure_command += self.cmake_flags
