@@ -81,6 +81,40 @@ jobs:
           if (!(mamba list cuda)[-1].contains('cuda')) {sleep -s 10; mamba install -y 'cuda' $cudaVersion}
           if (!(mamba list cuda)[-1].contains('cuda')) {throw 'CUDA Toolkit failed to install!'}
           
+          python -m pip install nvidia-cudnn-cu12==8.9.7.29
+
+          $env:CUDA_PATH = "C:\Miniconda3\envs\build"
+          $env:PATH = "$env:CUDA_PATH\bin;$env:PATH"
+          
+          $sourceLibDir = "C:/Miniconda3/envs/build/Lib/site-packages/nvidia/cudnn/lib/x64/"
+          $targetLibDir = "$env:CUDA_PATH/lib/x64/"
+          
+          $sourceIncludeDir = "C:/Miniconda3/envs/build/Lib/site-packages/nvidia/cudnn/include/"
+          $targetIncludeDir = "$env:CUDA_PATH/include/"
+          
+          $sourceBinDir = "C:/Miniconda3/envs/build/Lib/site-packages/nvidia/cudnn/bin/"
+          $targetBinDir = "$env:CUDA_PATH/bin/"
+          
+          if (-not (Test-Path -Path $targetLibDir)) {
+              New-Item -ItemType Directory -Path $targetLibDir -Force
+          }
+          
+          if (-not (Test-Path -Path $targetIncludeDir)) {
+              New-Item -ItemType Directory -Path $targetIncludeDir -Force
+          }
+          
+          if (-not (Test-Path -Path $targetBinDir)) {
+              New-Item -ItemType Directory -Path $targetBinDir -Force
+          }
+          
+          Copy-Item -Path "$sourceLibDir*" -Destination $targetLibDir -Force
+          Copy-Item -Path "$sourceIncludeDir*" -Destination $targetIncludeDir -Force
+          Copy-Item -Path "$sourceBinDir*" -Destination $targetBinDir -Force
+
+          Write-Host "All .lib files have been copied to $targetLibDir"
+          Write-Host "All .h files have been copied to $targetIncludeDir"
+          Write-Host "All .dll files have been copied to $targetBinDir"
+          
           git config --global --add safe.directory "*"
           
           python -m pip install huggingface_hub
@@ -97,7 +131,7 @@ jobs:
           python -m pip install ".\torchaudio-2.2.0.dev20240427+cu121-cp310-cp310-win_amd64.whl"
           python -m pip install ".\torchvision-0.19.0.dev20240428+cu121-cp310-cp310-win_amd64.whl"
           python -m pip install ".\triton_windows-0.1.0-py3-none-any.whl"
-          python -m pip install nvidia-cudnn-cu12==8.9.7.29
+          
           python -m pip install --upgrade build setuptools wheel packaging ninja psutil
           
       - name: Install VS2022 BuildTools 17.9.7
@@ -124,7 +158,7 @@ jobs:
           $env:FLASH_ATTENTION_FORCE_CXX11_ABI = 'FALSE'
           $env:BUILD_TARGET = "cuda"
           $env:CUDNN_PATH = "C:\Miniconda3\envs\build\lib\site-packages\nvidia\cudnn"
-          
+      
           python setup.py bdist_wheel --dist-dir=dist
           
       - uses: actions/upload-artifact@v3
