@@ -45,14 +45,12 @@ def setup_pytorch_extension(
     cxx_flags = [
         "/O2",
         "/std:c++17",
-        r"-IC:\Miniconda3\envs\build\Lib\site-packages\nvidia\cudnn\include",
         # "-fvisibility=hidden",
     ]
     nvcc_flags = [
         "-O3",
         "-gencode",
         "arch=compute_70,code=sm_70",
-        r"-IC:\Miniconda3\envs\build\Lib\site-packages\nvidia\cudnn\include",
         "-U__CUDA_NO_HALF_OPERATORS__",
         "-U__CUDA_NO_HALF_CONVERSIONS__",
         "-U__CUDA_NO_BFLOAT16_OPERATORS__",
