@@ -78,7 +78,6 @@ jobs:
           $cudaVersion = '${{ matrix.cuda }}'
           $cudaVersionPytorch = '${{ matrix.cuda }}'.Remove('${{ matrix.cuda }}'.LastIndexOf('.')).Replace('.','')
           mamba install -y -c nvidia/label/cuda-$cudaVersion cuda-toolkit cuda-runtime
-          mamba install -c conda-forge cudnn=8.9.7.29
           if (!(mamba list cuda)[-1].contains('cuda')) {sleep -s 10; mamba install -y 'cuda' $cudaVersion}
           if (!(mamba list cuda)[-1].contains('cuda')) {throw 'CUDA Toolkit failed to install!'}
           
@@ -98,7 +97,7 @@ jobs:
           python -m pip install ".\torchaudio-2.2.0.dev20240427+cu121-cp310-cp310-win_amd64.whl"
           python -m pip install ".\torchvision-0.19.0.dev20240428+cu121-cp310-cp310-win_amd64.whl"
           python -m pip install ".\triton_windows-0.1.0-py3-none-any.whl"
-          python -m pip install -r requirements.txt
+          python -m pip install nvidia-cudnn-cu12==8.9.7.29
           python -m pip install --upgrade build setuptools wheel packaging ninja psutil
           
       - name: Install VS2022 BuildTools 17.9.7
@@ -124,6 +123,9 @@ jobs:
           $env:FLASH_ATTENTION_FORCE_BUILD = 'TRUE'
           $env:FLASH_ATTENTION_FORCE_CXX11_ABI = 'FALSE'
           $env:BUILD_TARGET = "cuda"
+          $env:CUDNN_INCLUDE_DIR = "C:\Miniconda3\envs\build\lib\site-packages\cudnn\include"
+          $env:CUDNN_LIBRARY = "C:\Miniconda3\envs\build\lib\site-packages\cudnn\lib\cudnn.lib"
+          
           python setup.py bdist_wheel --dist-dir=dist
           
       - uses: actions/upload-artifact@v3
