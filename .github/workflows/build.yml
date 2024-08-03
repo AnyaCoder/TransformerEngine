@@ -123,8 +123,7 @@ jobs:
           $env:FLASH_ATTENTION_FORCE_BUILD = 'TRUE'
           $env:FLASH_ATTENTION_FORCE_CXX11_ABI = 'FALSE'
           $env:BUILD_TARGET = "cuda"
-          $env:CUDNN_INCLUDE_DIR = "C:\Miniconda3\envs\build\lib\site-packages\cudnn\include"
-          $env:CUDNN_LIBRARY = "C:\Miniconda3\envs\build\lib\site-packages\cudnn\lib\cudnn.lib"
+          $env:CUDNN_PATH = "C:\Miniconda3\envs\build\lib\site-packages\cudnn"
           
           python setup.py bdist_wheel --dist-dir=dist
           
