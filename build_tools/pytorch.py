@@ -45,6 +45,7 @@ def setup_pytorch_extension(
     cxx_flags = [
         "/O2",
         "/std:c++17",
+        r"-IC:\Miniconda3\envs\build\Lib\site-packages\nvidia\cudnn\include",
         # "-fvisibility=hidden",
     ]
     nvcc_flags = [
