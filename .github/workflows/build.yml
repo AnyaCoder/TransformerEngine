@@ -23,7 +23,7 @@ on:
 
 env:
   FORCE_CUDA: 1
-  MAX_JOBS: 6
+  MAX_JOBS: 4
   DISTUTILS_USE_SDK: 1 # otherwise distutils will complain on windows about multiple versions of msvc
   XFORMERS_BUILD_TYPE: "Release"
 
@@ -119,8 +119,8 @@ jobs:
           
           $env:CUDA_PATH = $env:CONDA_PREFIX
           $env:CUDA_HOME = $env:CONDA_PREFIX
-          $env:NVTE_FRAMEWORK: pytorch
-          $env:MAX_JOBS = '6'
+          $env:NVTE_FRAMEWORK = pytorch
+          $env:MAX_JOBS = '4'
           $env:FLASH_ATTENTION_FORCE_BUILD = 'TRUE'
           $env:FLASH_ATTENTION_FORCE_CXX11_ABI = 'FALSE'
           $env:BUILD_TARGET = "cuda"
