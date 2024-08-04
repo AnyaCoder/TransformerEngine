@@ -158,7 +158,15 @@ jobs:
           $env:FLASH_ATTENTION_FORCE_CXX11_ABI = 'FALSE'
           $env:BUILD_TARGET = "cuda"
           $env:CUDNN_PATH = "C:\Miniconda3\envs\build\lib\site-packages\nvidia\cudnn"
-      
+
+          git clone https://github.com/dlfcn-win32/dlfcn-win32.git --recursive
+          Push-Location -Path .\dlfcn-win32
+          New-Item -ItemType Directory -Name build | Push-Location
+          cmake .. -DCMAKE_INSTALL_PREFIX=../release
+          cmake --build . --config Release --target install
+          Pop-Location
+          Pop-Location
+          
           python setup.py bdist_wheel --dist-dir=dist
           
       - uses: actions/upload-artifact@v3
