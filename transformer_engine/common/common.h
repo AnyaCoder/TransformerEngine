@@ -84,33 +84,32 @@ TRANSFORMER_ENGINE_TYPE_NAME(__nv_fp8_e5m2)
 
 template <typename T>
 struct TypeInfo {
-  using types = std::tuple<byte, int32, fp32, fp16, bf16, fp8e4m3, fp8e5m2>;
+    using types = std::tuple<byte, int32, fp32, fp16, bf16, fp8e4m3, fp8e5m2>;
 
-  template <typename U, DType current>
-  struct Helper {
+    template <typename U, DType index>
+    struct Helper {
+        constexpr static DType getType() {
+            if constexpr (index < DType::kNumTypes) { 
+                using CurrentType = typename std::tuple_element<static_cast<int>(index), types>::type;
+                if constexpr (std::is_same<U, CurrentType>::value) {
+                    return index;
+                } else {
+                    return Helper<U, static_cast<DType>(static_cast<int>(index) + 1)>::getType();
+                }
+            } else {
+                return DType::kNumTypes;
+            }
+        }
+    };
+
+    template <typename U>
     constexpr static DType getType() {
-      constexpr int i = static_cast<int>(current);
-      if (std::is_same<U, typename std::tuple_element<i, types>::type>::value) {
-        return current;
-      } else {
-        return Helper<U, static_cast<DType>(i + 1)>::getType();
-      }
+        return Helper<U, DType::kByte>::getType();
     }
-  };
 
-  template <typename U>
-  struct Helper<U, DType::kNumTypes> {
-    constexpr static DType getType() { return DType::kNumTypes; }
-  };
-
-  template <typename U>
-  constexpr static DType getType() {
-    return Helper<U, DType::kByte>::getType();
-  }
-
-  constexpr static DType dtype = getType<T>();
-  constexpr static size_t size = sizeof(T);
-  constexpr static const char *name = detail::type_name<T>();
+    constexpr static DType dtype = getType<T>();
+    constexpr static size_t size = sizeof(T);
+    constexpr static const char *name = detail::type_name<T>();
 };
 
 #define TRANSFORMER_ENGINE_TYPE_SWITCH_ALL(dtype, type, ...) \
