@@ -162,7 +162,7 @@ jobs:
           git clone https://github.com/dlfcn-win32/dlfcn-win32.git --recursive
           Push-Location -Path .\dlfcn-win32
           New-Item -ItemType Directory -Name build | Push-Location
-          cmake .. -DCMAKE_INSTALL_PREFIX=../release
+          cmake .. -DCMAKE_INSTALL_PREFIX="../release"
           cmake --build . --config Release --target install
           Pop-Location
           Pop-Location
