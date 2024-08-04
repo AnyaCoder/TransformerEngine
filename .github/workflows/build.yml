@@ -166,6 +166,25 @@ jobs:
           cmake --build . --config Release --target install
           Pop-Location
           Pop-Location
+
+          $sourceLibDir = "D:/a/TransformerEngine/TransformerEngine/dlfcn-win32/release/lib/"
+          $targetLibDir = "$env:CUDA_PATH/lib/x64/"
+          
+          $sourceIncludeDir = "D:/a/TransformerEngine/TransformerEngine/dlfcn-win32/release/include/"
+          $targetIncludeDir = "$env:CUDA_PATH/include/"
+          
+          $sourceBinDir = "D:/a/TransformerEngine/TransformerEngine/dlfcn-win32/release/bin/"
+          $targetBinDir = "$env:CUDA_PATH/bin/"
+          
+          Copy-Item -Path "$sourceLibDir*" -Destination $targetLibDir -Force
+          Copy-Item -Path "$targetLibDir*" -Destination "$targetLibDir../" -Force
+          Copy-Item -Path "$sourceIncludeDir*" -Destination $targetIncludeDir -Force
+          Copy-Item -Path "$sourceBinDir*" -Destination $targetBinDir -Force
+
+          Write-Host "All .lib files have been copied to $targetLibDir"
+          Write-Host "All .h files have been copied to $targetIncludeDir"
+          Write-Host "All .dll files have been copied to $targetBinDir"
+          
           
           python setup.py bdist_wheel --dist-dir=dist
           
