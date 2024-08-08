@@ -10,7 +10,9 @@
 #include <cuda_bf16.h>
 #include <cuda_fp16.h>
 #include <cuda_fp8.h>
+#if !defined(__CUDACC__)
 #include <cuda_runtime_api.h>
+#endif
 #include <transformer_engine/transformer_engine.h>
 
 #include <functional>
@@ -84,32 +86,32 @@ TRANSFORMER_ENGINE_TYPE_NAME(__nv_fp8_e5m2)
 
 template <typename T>
 struct TypeInfo {
-    using types = std::tuple<byte, int32, fp32, fp16, bf16, fp8e4m3, fp8e5m2>;
+  using types = std::tuple<byte, int32, fp32, fp16, bf16, fp8e4m3, fp8e5m2>;
 
-    template <typename U, DType index>
-    struct Helper {
-        constexpr static DType getType() {
-            if constexpr (index < DType::kNumTypes) { 
-                using CurrentType = typename std::tuple_element<static_cast<int>(index), types>::type;
-                if constexpr (std::is_same<U, CurrentType>::value) {
-                    return index;
-                } else {
-                    return Helper<U, static_cast<DType>(static_cast<int>(index) + 1)>::getType();
-                }
-            } else {
-                return DType::kNumTypes;
-            }
-        }
-    };
-
-    template <typename U>
+  template <typename U, DType index>
+  struct Helper {
     constexpr static DType getType() {
-        return Helper<U, DType::kByte>::getType();
+      if constexpr (index < DType::kNumTypes) {
+        using CurrentType = typename std::tuple_element<static_cast<int>(index), types>::type;
+        if constexpr (std::is_same<U, CurrentType>::value) {
+          return index;
+        } else {
+          return Helper<U, static_cast<DType>(static_cast<int>(index) + 1)>::getType();
+        }
+      } else {
+        return DType::kNumTypes;
+      }
     }
+  };
 
-    constexpr static DType dtype = getType<T>();
-    constexpr static size_t size = sizeof(T);
-    constexpr static const char *name = detail::type_name<T>();
+  template <typename U>
+  constexpr static DType getType() {
+    return Helper<U, DType::kByte>::getType();
+  }
+
+  constexpr static DType dtype = getType<T>();
+  constexpr static size_t size = sizeof(T);
+  constexpr static const char *name = detail::type_name<T>();
 };
 
 #define TRANSFORMER_ENGINE_TYPE_SWITCH_ALL(dtype, type, ...) \

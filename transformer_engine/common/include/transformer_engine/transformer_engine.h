@@ -11,7 +11,9 @@
 #ifndef TRANSFORMER_ENGINE_TRANSFORMER_ENGINE_H_
 #define TRANSFORMER_ENGINE_TRANSFORMER_ENGINE_H_
 
+#if !defined(__CUDACC__)
 #include <cuda_runtime_api.h>
+#endif
 #include <stddef.h>
 
 #ifdef __cplusplus
